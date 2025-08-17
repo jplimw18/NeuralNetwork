@@ -35,9 +35,14 @@ namespace NeuralNetwork.Model
             Bias = random.NextDouble();
         }
 
-        public void CalculateDelta(double w, double d)
+        public void CalculateDelta(double[] w, double[] d)
         {
-            Delta = d * w * Output;
+            for (uint i = 0; i < w.Length; ++i)
+            {
+                Delta += d[i] * w[i];
+            }
+
+            Delta *= Output;
         }
 
         private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
@@ -56,14 +61,14 @@ namespace NeuralNetwork.Model
             return Output;
         }
 
-        public void UpdateWeights(double cost, double learningRate, double[] inputs)
+        public void UpdateWeights(double learningRate, double[] inputs)
         {
             for (uint i = 0; i < Weights.Length; ++i)
             {
-                Weights[i] -= learningRate * cost * inputs[i];
+                Weights[i] -= learningRate * Delta * inputs[i];
             }
 
-            Bias -= learningRate * cost;
+            Bias -= learningRate * Delta;
         }
     }
 }

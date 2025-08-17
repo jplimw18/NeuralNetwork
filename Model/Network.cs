@@ -22,16 +22,39 @@ namespace NeuralNetwork.Model
         private double Cost(double output, double expected) => (expected * Math.Log(output) + (1 - expected) * Math.Log(1 - output)) / -TrainingData[0][..^1].Length;
 
         // TODO: Ajustar o BackPropagation para lidar com múltiplas camadas e pesos corretamente
-        private void BackPropagation(double expected, double[] inputs)
+        private void BackPropagation(double expected)
         {
-            List<double> deltas = new List<double>();
+            List<(double, double[])> deltas = new();
 
             foreach (var n in Layers.Last().Neurons)
-                deltas.Add((n.Output - expected) * n.Output);
+                deltas.Add(((n.Output - expected) * n.Output, n.Weights));
 
             for (int i = Layers.Count - 2; i >= 0; ++i)
             {
+                var layer = Layers[i];
 
+                for (uint j = 0; j < layer.LayerSize; ++j)
+                {
+                    var neuron = layer.Neurons[j];
+                    double[] d = deltas.Select(x => x.Item1).ToArray();
+                    double[] w = deltas.Select(x => x.Item2[j]).ToArray();
+                    neuron.CalculateDelta(w, d);
+                }
+
+                deltas.Clear();
+                foreach (var n in layer.Neurons)
+                    deltas.Add((n.Delta, n.Weights));
+            }
+        }
+
+        private void UpdateWeights(double[] inputs)
+        {
+            foreach (var layer in Layers)
+            {
+                inputs = Layers.IndexOf(layer) == 0 ? inputs : layer.Outputs;
+
+                foreach (var n in layer.Neurons)
+                    n.UpdateWeights(LearningRate, inputs);
             }
         }
 
