@@ -49,7 +49,7 @@ namespace NeuralNetwork
         {
             var data = GetAndSample();
             
-            var network = new Network(100, data, 1e-5);
+            var network = new Network(100, data, 1e-4);
             network.AddLayer(2);
             network.AddLayer(3);
             network.AddLayer(1);

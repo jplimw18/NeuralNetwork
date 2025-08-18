@@ -27,7 +27,7 @@ namespace NeuralNetwork.Model
             List<(double, double[])> deltas = new();
 
             foreach (var n in Layers.Last().Neurons)
-                deltas.Add((Cost(n.Output, expected), n.Weights));
+                deltas.Add((((n.Output - expected) * (n.Output * (1.0 - n.Output))), n.Weights));
 
             for (int i = Layers.Count - 2; i >= 0; --i)
             {
