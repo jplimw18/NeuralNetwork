@@ -29,20 +29,21 @@ namespace NeuralNetwork.Model
             Weights = new double[inputSize];
             for (uint i = 0; i < inputSize; ++i)
             {
-                Weights[i] = random.NextDouble();
+                Weights[i] = (random.NextDouble() - 1) * 2;
             }
 
-            Bias = random.NextDouble();
+            Bias = (random.NextDouble() - 1) * 2;
         }
 
         public void CalculateDelta(double[] w, double[] d)
         {
+            Delta = 0;
             for (uint i = 0; i < w.Length; ++i)
             {
                 Delta += d[i] * w[i];
             }
 
-            Delta *= Output;
+            Delta *= Output * (1 - Output);
         }
 
         private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
@@ -52,6 +53,7 @@ namespace NeuralNetwork.Model
             if (inputs.Length != Weights.Length)
                 throw new ArgumentException("Input size must match weights size.");
 
+            PonderedSum = Bias; 
             for (uint i = 0; i < inputs.Length; ++i)
             {
                 PonderedSum += inputs[i] * Weights[i];

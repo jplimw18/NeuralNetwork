@@ -19,15 +19,17 @@ namespace NeuralNetwork.Model
             Layers = new List<Layer>();
         }
 
-        private double Cost(double output, double expected) => ((expected * Math.Log(output) + (1 - expected) * Math.Log(1 - output))) / -TrainingData[0][..^1].Length;
-
         // TODO: Ajustar o BackPropagation para lidar com múltiplas camadas e pesos corretamente
         private void BackPropagation(double expected)
         {
             List<(double, double[])> deltas = new();
 
             foreach (var n in Layers.Last().Neurons)
-                deltas.Add((((n.Output - expected) * (n.Output * (1.0 - n.Output))), n.Weights));
+            {
+                double delta = (n.Output - expected) * n.Output * (1 - n.Output);
+                deltas.Add((delta, n.Weights));
+                n.Delta = delta;
+            }
 
             for (int i = Layers.Count - 2; i >= 0; --i)
             {

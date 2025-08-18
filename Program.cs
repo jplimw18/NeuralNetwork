@@ -47,11 +47,18 @@ namespace NeuralNetwork
 
         static void Main(string[] args)
         {
-            var data = GetAndSample();
-            
-            var network = new Network(100, data, 1e-4);
+            double[][] data = null!;
+
+            //data = GetAndSample();
+            //data = GetOrSample();
+            //data = GetNandSample();
+            data = GetXorSample();
+
+
+            var network = new Network(1000 * 1000, data, 1e-3);
+            //network.AddLayer(2);
+            //network.AddLayer(3);
             network.AddLayer(2);
-            network.AddLayer(3);
             network.AddLayer(1);
 
             network.Train();
@@ -60,7 +67,10 @@ namespace NeuralNetwork
             foreach (var sample in data)
             {
                 var output = network.Predict(sample.Take(sample.Length - 1).ToArray());
-                Console.WriteLine($"Input: {string.Join(", ", sample.Take(sample.Length - 1))} => Output: {(output[0] > 0.5 ? 1 : 0)} (Expected: {sample.Last()}), Raw: {output[0]}");
+                foreach (var o in output)
+                {
+                    Console.WriteLine($"O/Neuron {output.ToList().IndexOf(o)}: inputs-> {sample[..^1][0]}, {sample[..^1][1]} => (Expected: {sample[2]}), out => {(o > 0.5 ? 1: 0)} (raw: {o})");
+                }
             }
         }
     }
